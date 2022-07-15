@@ -1,0 +1,93 @@
+@startuml
+autonumber
+skinparam style strictuml
+
+actor Veterinary as vet
+boundary UI as ui
+control PetController as pc
+participant ProcessPetUseCase as puc
+participant PetRepository as pr
+entity Pet as p
+entity PetDocument as pd
+database DB as db
+
+vet -> ui : newPet
+ui --> pc : <<createPet>>
+pc --> puc : <<savePet>>
+puc --> pr : <<save>>
+pr -> pd : map
+activate pd
+pd --> pr : new PetDocument
+deactivate pd
+pr --> db : <<save>>
+db --> pr : PetDocument stored
+pr -> p : map
+activate p
+p --> pr : new Pet
+deactivate p
+pr --> puc : Pet created
+puc --> pc : Pet created
+pc --> ui : Pet created
+
+vet -> ui : viewPets
+ui --> pc : <<allPets>>
+pc --> puc : <<allPets>>
+puc --> pr : <<findAll>>
+pr --> db : <<findAll>>
+db --> pr : PetDocuments stored
+loop
+    pr -> p : map
+    activate p
+    p --> pr : new Pet
+    deactivate p
+end
+pr --> puc : Pets
+puc --> pc : Pets
+pc --> ui : Pets
+
+vet -> ui : reviewPet
+ui --> pc : <<petById>>
+pc --> puc : <<findById>>
+puc --> pr : <<findById>>
+pr --> db : <<findById>>
+db --> pr : PetDocument stored
+pr -> p : map
+activate p
+p --> pr : new Pet
+deactivate p
+pr --> puc : Pet
+puc --> pc : Pet
+pc --> ui : Pet to review
+
+vet -> ui : updatePetInfo
+ui --> pc : <<updatePet>>
+pc --> puc : <<savePet>>
+puc --> pr : <<save>>
+pr -> pd : map
+activate pd
+pd --> pr : new PetDocument
+deactivate pd
+pr --> db : <<save>>
+db --> pr : PetDocument stored
+pr -> p : map
+activate p
+p --> pr : new Pet
+deactivate p
+pr --> puc : Pet updated
+puc --> pc : Pet updated
+pc --> ui : Pet updated
+
+vet -> ui : releasePet
+ui --> pc : <<deletePetById>>
+pc --> puc : <<deletePetById>>
+puc --> pr : <<deleteById>>
+pr --> db : <<deleteById>>
+db --> pr : db response
+pr --> puc: response
+alt successfully deleted
+    puc --> pc : response
+else pet not found
+    puc --> pc : Pet to delete notFound
+end
+pc --> ui : response
+@enduml

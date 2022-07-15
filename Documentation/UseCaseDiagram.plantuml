@@ -1,0 +1,20 @@
+@startuml
+left to right direction
+skinparam actorStyle awesome
+
+"Veterinary" as vet
+
+package VetHospital {
+    usecase "Join Pet" as JP
+    usecase "View Pets" as AP
+    usecase "Review Pet" as RP
+    usecase "Update Pet Info" as upi
+    usecase "Release Pet" as DP
+}
+
+vet --> JP
+vet --> AP
+vet --> RP
+vet --> upi
+vet --> DP
+@enduml
